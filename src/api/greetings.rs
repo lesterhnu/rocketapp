@@ -4,15 +4,17 @@ use rocket::http::CookieJar;
 use rocket::serde::{Deserialize, Serialize};
 #[allow(unused)]
 use rocket::serde::json::{Json, serde_json::json, Value};
-
+use sea_orm::{ConnectionTrait, Database, DatabaseConnection, Schema};
+use entity::config::Model as cf;
 use middleware::request::Token;
 
-use crate::middleware;
+use crate::{entity, middleware};
 
 
 // use crate::response::
 pub fn export_routes() -> Vec<Route> {
     routes![
+        orm_test,
         hello,
         get_query_params,
         // get_with_token
@@ -22,6 +24,12 @@ pub fn export_routes() -> Vec<Route> {
     ]
 }
 
+#[get("/orm_test")]
+pub fn orm_test(){
+    // let opt = format!("{}://{}:{}","mysql","root","")
+    let db:DatabaseConnection = Database::connect("mysql://root:123456@localhost/koutu").await?;
+
+}
 #[derive(FromForm, Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct Person {

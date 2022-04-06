@@ -6,6 +6,7 @@ use rocket::serde::json::{serde_json::json, Value};
 
 use crate::response::Response;
 
+mod entity;
 mod api;
 mod response;
 mod middleware;
