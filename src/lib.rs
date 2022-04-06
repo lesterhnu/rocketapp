@@ -6,12 +6,18 @@ pub fn get_current_unix() -> u64 {
         .duration_since(UNIX_EPOCH)
         .expect("get_current_unix_err").as_secs()
 }
-
+/// ```
+/// use rocketapp::add;
+/// #[test]
+/// pub fn add_test(){
+///     assert_eq!(add(1,2),3);
+/// }
+/// ````
 pub fn add<T:Add<Output=T>>(x: T, y: T) -> T {
     x + y
 }
 
-#[test]
-pub fn testadd() {
-    assert_eq!(add(1, 2), 3);
+pub fn md5(){
+    let s = utils::md5("123".to_string());
+    println!("{}",s)
 }
