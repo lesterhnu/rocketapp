@@ -1,15 +1,14 @@
-use rocket::{get, post, Route};
-use rocket::form::{self,Error, Form, FromForm};
+use rocket::form::{self, Error, Form, FromForm};
 use rocket::http::CookieJar;
-use rocket::serde::{Deserialize, Serialize};
+use rocket::response::{Flash, Redirect};
 #[allow(unused)]
-use rocket::serde::json::{Json, serde_json::json, Value};
-use sea_orm::{ConnectionTrait, Database, DatabaseConnection, Schema};
-use entity::config::Model as cf;
+use rocket::serde::json::{serde_json::json, Json, Value};
+use rocket::serde::{Deserialize, Serialize};
+use rocket::{get, post, Route};
+use sea_orm::{Database, DatabaseConnection};
+use crate::entity::prelude::*;
+use crate::{entity,middleware};
 use middleware::request::Token;
-
-use crate::{entity, middleware};
-
 
 // use crate::response::
 pub fn export_routes() -> Vec<Route> {
@@ -26,11 +25,16 @@ pub fn export_routes() -> Vec<Route> {
 }
 
 #[get("/orm_test")]
-pub fn orm_test(){
+pub async fn orm_test() -> Flash<Redirect> {
     // let opt = format!("{}://{}:{}","mysql","root","")
-    let db:DatabaseConnection = Database::connect("mysql://root:123456@localhost/koutu").await?;
-
+    let db: DatabaseConnection = Database::connect("mysql://root:123456@localhost/koutu")
+        .await
+        .unwrap();
+    let cf:entity::config::ActiveModel = Config::find_by_id;
+    println!("{:?}", res);
+    Flash::success(Redirect::to("/h2/h2"), "config insert success")
 }
+
 #[derive(FromForm, Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct Person {
@@ -47,17 +51,18 @@ fn validate_person_age<'v>(age: &u64) -> form::Result<'v, ()> {
     Ok(())
 }
 
-
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct Message {
     pub id: usize,
     pub msg: String,
 }
+
 #[get("/")]
-pub fn index()->&'static str{
+pub fn index() -> &'static str {
     "hello world"
 }
+
 #[get("/hello")]
 pub fn hello() -> &'static str {
     "hello"
@@ -81,14 +86,13 @@ pub fn test_cookie(cookies: &CookieJar<'_>) -> Option<String> {
     for i in cookies.iter() {
         println!("{:?}:{:?}", i.name(), i.value())
     }
-    cookies.get("user_id")
-        .map(|crumb| {
-            println!("{:?}:{:?}", crumb.name(), crumb.value());
-            format!("User ID: {}", crumb.value())
-        })
+    cookies.get("user_id").map(|crumb| {
+        println!("{:?}:{:?}", crumb.name(), crumb.value());
+        format!("User ID: {}", crumb.value())
+    })
 }
 
-#[derive(FromForm,Debug)]
+#[derive(FromForm, Debug)]
 pub struct Task<'r> {
     pub complete: bool,
     pub r#type: &'r str,
@@ -96,7 +100,7 @@ pub struct Task<'r> {
 
 #[get("/todo_task", data = "<task>")]
 pub async fn todo_task(task: Form<Task<'_>>) {
-    println!("{:?}",task);
+    println!("{:?}", task);
 }
 // token guard
 // #[post("/get_with_token", data = "<post_data>", format = "json")]

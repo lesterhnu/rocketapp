@@ -16,5 +16,5 @@ pub fn md5<S:Into<String>>(input:S)->String{
 #[test]
 fn md5_test(){
     println!("{}",md5("123456"));
-    assert_eq!(md5("123456"),"e10adc3949ba59abbe56e057f20f883e")
+    assert_eq!(md5("123456"),"e10adc3949ba59abbe56e057f20f883e");
 }

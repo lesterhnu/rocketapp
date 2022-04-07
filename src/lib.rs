@@ -1,7 +1,6 @@
 use std::ops::Add;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-
 pub fn get_current_unix() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -25,4 +24,5 @@ pub fn md5() {
 #[test]
 pub fn get_unix() {
     println!("{:?}", time::OffsetDateTime::now_utc().unix_timestamp());
+    println!("{}", time::OffsetDateTime::now_utc().unix_timestamp_nanos());
 }
