@@ -14,6 +14,7 @@ use crate::{entity, middleware};
 // use crate::response::
 pub fn export_routes() -> Vec<Route> {
     routes![
+        index,
         orm_test,
         hello,
         get_query_params,
@@ -53,7 +54,10 @@ pub struct Message {
     pub id: usize,
     pub msg: String,
 }
-
+#[get("/")]
+pub fn index()->&'static str{
+    "hello world"
+}
 #[get("/hello")]
 pub fn hello() -> &'static str {
     "hello"
