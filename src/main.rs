@@ -6,10 +6,11 @@ use rocket::serde::json::{serde_json::json, Value};
 
 use crate::response::Response;
 
-mod entity;
+mod models;
 mod api;
 mod response;
 mod middleware;
+mod db;
 
 #[catch(404)]
 fn not_found(_req: &Request) -> Value {

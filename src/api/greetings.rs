@@ -1,16 +1,18 @@
 use rocket::form::{self, Error, Form, FromForm};
+use sea_orm::entity::prelude::*;
 use rocket::http::CookieJar;
-use rocket::response::{Flash, Redirect};
+// use rocket::response::{Flash, Redirect};
 #[allow(unused)]
 use rocket::serde::json::{serde_json::json, Json, Value};
 use rocket::serde::{Deserialize, Serialize};
 use rocket::{get, post, Route};
 use sea_orm::{Database, DatabaseConnection};
-use crate::entity::prelude::*;
-use crate::{entity,middleware};
+// use crate::entity::prelude::*;
+use models::posts::Entity as Post;
+use crate::{middleware, models};
 use middleware::request::Token;
 
-// use crate::response::
+
 pub fn export_routes() -> Vec<Route> {
     routes![
         index,
@@ -25,14 +27,15 @@ pub fn export_routes() -> Vec<Route> {
 }
 
 #[get("/orm_test")]
-pub async fn orm_test() -> Flash<Redirect> {
+pub async fn orm_test() -> String {
     // let opt = format!("{}://{}:{}","mysql","root","")
     let db: DatabaseConnection = Database::connect("mysql://root:123456@localhost/koutu")
         .await
         .unwrap();
-    let cf:entity::config::ActiveModel = Config::find_by_id;
-    println!("{:?}", res);
-    Flash::success(Redirect::to("/h2/h2"), "config insert success")
+    let post = Post::find_by_id(1).one(&db).await.unwrap().unwrap();
+    println!("{:?}", post.text);
+    // Flash::success(Redirect::to("/h2/h2"), "config insert success")
+    "success".to_string()
 }
 
 #[derive(FromForm, Serialize, Deserialize)]
