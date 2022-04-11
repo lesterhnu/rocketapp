@@ -11,6 +11,7 @@ mod api;
 mod response;
 mod middleware;
 mod db;
+mod entity;
 
 #[catch(404)]
 fn not_found(_req: &Request) -> Value {
@@ -57,6 +58,8 @@ impl Area for Circle {
 
 #[get("/circle_area")]
 pub fn circle_area() ->String {
+    let _a:f64 = 3.51123123;
+    
     let c = Circle{r:0.5};
     format!("{}",c.area())
 }
@@ -67,7 +70,9 @@ pub async fn main() {
     let groups: Vec<(&str, Vec<Route>)> = vec![("/h1", routes![index1]), ("/h2", routes![index2,index3])];
     let mut res = Rocket::build()
         .register("/", catchers![not_found,catch_default])
-        .mount("/", api::greetings::export_routes());
+        .mount("/", api::greetings::export_routes())
+        .mount("/",routes![circle_area]);
+    
     for i in groups {
         res = res.mount(i.0, i.1);
     }
