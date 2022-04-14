@@ -11,7 +11,6 @@ mod api;
 mod response;
 mod middleware;
 mod db;
-mod entity;
 
 #[catch(404)]
 fn not_found(_req: &Request) -> Value {
