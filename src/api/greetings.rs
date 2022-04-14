@@ -1,18 +1,17 @@
-use rocket::form::{self, Error, Form, FromForm};
-use sea_orm::entity::prelude::*;
-use rocket::http::CookieJar;
-// use rocket::response::{Flash, Redirect};
-#[allow(unused)]
-use rocket::serde::json::{serde_json::json, Json, Value};
-use rocket::serde::{Deserialize, Serialize};
 use rocket::{get, post, Route};
+use rocket::form::{self, Error, Form, FromForm};
+use rocket::http::CookieJar;
+use rocket::response::{Flash, Redirect};
+use rocket::serde::{Deserialize, Serialize};
+#[allow(unused)]
+use rocket::serde::json::{Json, serde_json::json, Value};
 use sea_orm::{Database, DatabaseConnection};
-// use crate::entity::prelude::*;
-use models::posts::Entity as Post;
-use crate::{middleware, models};
+
 use middleware::request::Token;
 
+use crate::middleware;
 
+// use crate::response::
 pub fn export_routes() -> Vec<Route> {
     routes![
         index,
@@ -27,15 +26,13 @@ pub fn export_routes() -> Vec<Route> {
 }
 
 #[get("/orm_test")]
-pub async fn orm_test() -> String {
+#[allow(dead_code)]
+pub async fn orm_test() -> Flash<Redirect> {
     // let opt = format!("{}://{}:{}","mysql","root","")
-    let db: DatabaseConnection = Database::connect("mysql://root:123456@localhost/koutu")
+    let _db: DatabaseConnection = Database::connect("mysql://root:123456@localhost/koutu")
         .await
         .unwrap();
-    let post = Post::find_by_id(1).one(&db).await.unwrap().unwrap();
-    println!("{:?}", post.text);
-    // Flash::success(Redirect::to("/h2/h2"), "config insert success")
-    "success".to_string()
+    Flash::success(Redirect::to("/h2/h2"), "config insert success")
 }
 
 #[derive(FromForm, Serialize, Deserialize)]
@@ -105,6 +102,7 @@ pub struct Task<'r> {
 pub async fn todo_task(task: Form<Task<'_>>) {
     println!("{:?}", task);
 }
+
 // token guard
 // #[post("/get_with_token", data = "<post_data>", format = "json")]
 // pub async fn get_with_token(post_data: Json<Person>) -> Value {
@@ -114,3 +112,12 @@ pub async fn todo_task(task: Form<Task<'_>>) {
 //         data:post_data
 //     })
 // }
+#[test]
+fn test_float() {
+    let a = std::f64::consts::PI;
+    println!("{}", a);
+    println!("ceil:{}", a.ceil());
+    println!("floor:{}", a.floor());
+    println!("exp:{}", a.exp());
+    println!("round:{}", a.round());
+}
