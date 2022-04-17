@@ -1,15 +1,14 @@
-use rocket::{get, post, Route};
 use rocket::form::{self, Error, Form, FromForm};
 use rocket::http::CookieJar;
 use rocket::response::{Flash, Redirect};
-use rocket::serde::{Deserialize, Serialize};
 #[allow(unused)]
-use rocket::serde::json::{Json, serde_json::json, Value};
+use rocket::serde::json::{serde_json::json, Json, Value};
+use rocket::serde::{Deserialize, Serialize};
+use rocket::{get, post, Route};
 use sea_orm::{Database, DatabaseConnection};
 
-use middleware::request::Token;
-
 use crate::middleware;
+use middleware::request::Token;
 
 // use crate::response::
 pub fn export_routes() -> Vec<Route> {
@@ -18,7 +17,7 @@ pub fn export_routes() -> Vec<Route> {
         orm_test,
         hello,
         get_query_params,
-        // get_with_token
+        get_with_token,
         post_json_data,
         test_cookie,
         todo_task
@@ -35,7 +34,7 @@ pub async fn orm_test() -> Flash<Redirect> {
     Flash::success(Redirect::to("/h2/h2"), "config insert success")
 }
 
-#[derive(FromForm, Serialize, Deserialize)]
+#[derive(FromForm, Serialize, Deserialize, Debug)]
 #[serde(crate = "rocket::serde")]
 pub struct Person {
     pub name: String,
@@ -104,14 +103,13 @@ pub async fn todo_task(task: Form<Task<'_>>) {
 }
 
 // token guard
-// #[post("/get_with_token", data = "<post_data>", format = "json")]
-// pub async fn get_with_token(post_data: Json<Person>) -> Value {
-//     json!(Response{
-//         code:0,
-//         msg:"get_with_token",
-//         data:post_data
-//     })
-// }
+#[post("/get_with_token", data = "<post_data>", format = "json")]
+pub async fn get_with_token(post_data: Json<Person>) -> Value {
+    println!("{:?}", post_data);
+    json!({
+        "ping":"pong"
+    })
+}
 #[test]
 fn test_float() {
     let a = std::f64::consts::PI;
